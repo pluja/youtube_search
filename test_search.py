@@ -15,8 +15,8 @@ class TestSearch:
 
     def test_dict(self):
         search = YoutubeSearch('test', max_results=10)
-        assert isinstance(search.to_dict(), list)
+        assert isinstance(search.videos_to_dict(), list)
 
     def test_json(self):
         search = YoutubeSearch('test', max_results=10)
-        assert isinstance(search.to_json(), str)
+        assert isinstance(search.videos_to_json(), str)
