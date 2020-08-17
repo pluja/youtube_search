@@ -5,6 +5,9 @@ Python function for searching for youtube videos to avoid using their heavily ra
 
 To avoid using the API, this uses the form on the youtube homepage and scrapes the resulting page.
 
+## Installation
+`pip install youtube-search-fork`
+
 ## Example Usage
 For a basic search (and all of the current functionality), you can use the search tool as follows:
 
