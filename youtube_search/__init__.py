@@ -53,8 +53,8 @@ class YoutubeSearch:
                 'videoTitle': video['gridVideoRenderer']['title']['runs'][0]['text'],
                 'id': video['gridVideoRenderer']['videoId'],
                 'channelName': channelDetails['title'],
-                'views': video['gridVideoRenderer']['publishedTimeText']['simpleText'],
-                'timeStamp': video['gridVideoRenderer']['viewCountText']['simpleText'],
+                'timeStamp': video['gridVideoRenderer']['publishedTimeText']['simpleText'],
+                'views': video['gridVideoRenderer']['viewCountText']['simpleText'],
                 'videoThumb': video['gridVideoRenderer']['thumbnail']['thumbnails'][0]['url'],
                 'channelUrl': "/channel/{}".format(id)
             }

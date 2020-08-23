@@ -30,4 +30,15 @@ print(results)
 # returns a dictionary like this:
 [{'id': 'UCJWCJC...CieLOLQ', 'name': 'channelName', 'suscriberCountText': '200.000', 'thumbnails': ['URL1', 'URL2'], 'url_suffix': '/user/channelName'}]
 
+#########################################
+# Get a channel info and videos:
+data = YoutubeSearch.channelInfo(channel_id)
+
+channelInfo = data[0]
+print(channelInfo)
+$> {'id': 'UCjr2bPAyPV.....8Q', 'name': 'Channel Name', 'avatar': 'https://yt3.ggpht.com/a/AATXAJzuPoT_2M54dus-P2qXgnbY0MPxbkzvwv3muxQn=s176-c-k-c0x00ffffff-no-rj', 'subCount': '24K'}
+
+channelVideoList = data[1]
+print(channelVideoList)
+$> [{'videoTitle': 'Video title goes here', 'id': 'video_id_here', 'channelName': 'Channel Name', 'views': '17 hours ago', 'timeStamp': '13,661 views', 'videoThumb': 'https://i.ytimg.com/vi/3eC4Hp4MNBA/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4....5o_2mazZd40g_xc_3917M5w', 'channelUrl': '/channel/UCjr2bPA.......gT3W8Q'}, {...}, {...}, ...]
 ```
