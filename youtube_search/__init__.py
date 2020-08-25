@@ -12,8 +12,7 @@ class YoutubeSearch:
         self.channels = self.search_channels()
         
 
-    def channelInfo(id):
-        print("hi, searching for: {}".format(id))
+    def channelInfo(id, includeVideos=True):
         encoded_search = urllib.parse.quote(id)
         BASE_URL = "https://youtube.com"
         url = f"{BASE_URL}/channel/{encoded_search}/videos"
@@ -31,37 +30,41 @@ class YoutubeSearch:
         end = response.index("};", start) + 1
         json_str = response[start:end]
         data = json.loads(json_str)
-        videoContent = data["contents"]["twoColumnBrowseResultsRenderer"]['tabs'][1]['tabRenderer']['content'][
-            'sectionListRenderer']['contents'][0]['itemSectionRenderer'][
-            'contents'][0]['gridRenderer']['items']
+
+        if includeVideos:
+            videoContent = data["contents"]["twoColumnBrowseResultsRenderer"]['tabs'][1]['tabRenderer']['content'][
+                'sectionListRenderer']['contents'][0]['itemSectionRenderer'][
+                'contents'][0]['gridRenderer']['items']
         channelDetails = data["header"]['c4TabbedHeaderRenderer']
 
         try:
             sC = channelDetails['subscriberCountText']['simpleText'].split(" ")[0]
         except:
             sC = "unknown"
+            
         channel = {
             'id': id,
             'name': channelDetails['title'],
             'avatar': channelDetails['avatar']['thumbnails'][2]['url'],
             'subCount': sC
         }
-        
-        videos = []
-        for video in videoContent:
-            vid = {
-                'videoTitle': video['gridVideoRenderer']['title']['runs'][0]['text'],
-                'id': video['gridVideoRenderer']['videoId'],
-                'channelName': channelDetails['title'],
-                'timeStamp': video['gridVideoRenderer']['publishedTimeText']['simpleText'],
-                'views': video['gridVideoRenderer']['viewCountText']['simpleText'],
-                'videoThumb': video['gridVideoRenderer']['thumbnail']['thumbnails'][0]['url'],
-                'channelUrl': "/channel/{}".format(id)
-            }
-            videos.append(vid)
-
         results.append(channel)
-        results.append(videos)
+        
+        if includeVideos:
+            videos = []
+            for video in videoContent:
+                vid = {
+                    'videoTitle': video['gridVideoRenderer']['title']['runs'][0]['text'],
+                    'id': video['gridVideoRenderer']['videoId'],
+                    'channelName': channelDetails['title'],
+                    'channelId': id,
+                    'timeStamp': video['gridVideoRenderer']['publishedTimeText']['simpleText'],
+                    'views': video['gridVideoRenderer']['viewCountText']['simpleText'],
+                    'videoThumb': video['gridVideoRenderer']['thumbnail']['thumbnails'][0]['url'],
+                    'channelUrl': "/channel/{}".format(id)
+                }
+                videos.append(vid)
+            results.append(videos)
 
         return results
 
@@ -170,6 +173,7 @@ class YoutubeSearch:
                     except:
                         res['publishedText'] = "unavailable"
                     res["url_suffix"] = video_data.get("navigationEndpoint", {}).get("commandMetadata", {}).get("webCommandMetadata", {}).get("url", None)
+                    res["channelId"] = video_data.get("longBylineText").get("runs")[0].get("navigationEndpoint").get("browseEndpoint").get("browseId")
                     results.append(res)
         return results
 

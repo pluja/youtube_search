@@ -10,8 +10,8 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="youtube-search-fork",
-    version="1.1.4",
-    description="Enhanced: Perform YouTube video searches without the API. Fork of original youtube-search by joetats",
+    version="1.2.0",
+    description="Search on youtube avoiding the use their heavily rate-limited API. Fork of original youtube-search by joetats",
     long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/pluja/youtube_search-fork",
