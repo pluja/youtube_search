@@ -15,8 +15,13 @@ class YoutubeSearch:
     def channelInfo(id, includeVideos=True):
         encoded_search = urllib.parse.quote(id)
         BASE_URL = "https://youtube.com"
-        url = f"{BASE_URL}/channel/{encoded_search}/videos"
-        response = requests.get(url).text
+
+        if encoded_search[0:2] == "UC" and len(encoded_search) == 24:
+            url = f"{BASE_URL}/channel/{encoded_search}/videos"
+            response = requests.get(url).text
+        else:
+            url = f"{BASE_URL}/user/{encoded_search}/videos"
+            response = requests.get(url).text
 
         while 'window["ytInitialData"]' not in response:
             response = requests.get(url).text
@@ -40,7 +45,7 @@ class YoutubeSearch:
         try:
             sC = channelDetails['subscriberCountText']['simpleText'].split(" ")[0]
         except:
-            sC = "unknown"
+            sC = channelDetails['subscriberCountText']['runs'][0]['text'].split(" ")[0]
             
         channel = {
             'id': id,
@@ -53,14 +58,20 @@ class YoutubeSearch:
         if includeVideos:
             videos = []
             for video in videoContent:
+
+                try:
+                    title=video['gridVideoRenderer']['title']['simpleText']
+                except:
+                    title=video['gridVideoRenderer']['title']['runs'][0]['text']
+
                 vid = {
-                    'videoTitle': video['gridVideoRenderer']['title']['runs'][0]['text'],
                     'id': video['gridVideoRenderer']['videoId'],
+                    'videoThumb': video['gridVideoRenderer']['thumbnail']['thumbnails'][1]['url'],
+                    'videoTitle': title,
                     'channelName': channelDetails['title'],
                     'channelId': id,
                     'timeStamp': video['gridVideoRenderer']['publishedTimeText']['simpleText'],
                     'views': video['gridVideoRenderer']['viewCountText']['simpleText'],
-                    'videoThumb': video['gridVideoRenderer']['thumbnail']['thumbnails'][0]['url'],
                     'channelUrl': "/channel/{}".format(id)
                 }
                 videos.append(vid)
