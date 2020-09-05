@@ -1,3 +1,9 @@
+[![Generic badge](https://img.shields.io/badge/PyPi-1.2.1-green.svg)](https://pypi.org/project/youtube-search-fork/)
+[![Generic badge](https://img.shields.io/badge/Mantained-YES-green.svg)](https://pypi.org/project/youtube-search-fork/)
+
+
+
+
 # youtube_search-fork
 This fork adds the ability to search for channels, latest content of a channel, channel information, channel vidoes, and adds videos published date and channelId.
 It works scrapping the Youtube pages.
