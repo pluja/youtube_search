@@ -13,18 +13,19 @@ class YoutubeSearch:
         
 
     def channelInfo(id, includeVideos=True):
+        headers = {"Accept-Language": "en-US,en;q=0.5"}
         encoded_search = urllib.parse.quote(id)
         BASE_URL = "https://youtube.com"
 
         if encoded_search[0:2] == "UC" and len(encoded_search) == 24:
             url = f"{BASE_URL}/channel/{encoded_search}/videos"
-            response = requests.get(url).text
+            response = requests.get(url, headers=headers).text
         else:
             url = f"{BASE_URL}/user/{encoded_search}/videos"
-            response = requests.get(url).text
+            response = requests.get(url, headers=headers).text
 
         while 'window["ytInitialData"]' not in response:
-            response = requests.get(url).text
+            response = requests.get(url, headers=headers).text
 
         results = []
         start = (
@@ -79,25 +80,65 @@ class YoutubeSearch:
 
         return results
 
+    def videoInfo(id):
+        headers = {"Accept-Language": "en-US,en;q=0.5"}
+        videoId = urllib.parse.quote(id)
+        BASE_URL = "https://youtube.com"
+
+        url = f"{BASE_URL}/watch?v={videoId}/videos"
+        response = requests.get(url, headers=headers).text
+
+        while 'window["ytInitialData"]' not in response:
+            response = requests.get(url, headers=headers).text
+
+        results = []
+        start = (
+            response.index('window["ytInitialData"]')
+            + len('window["ytInitialData"]')
+            + 3
+        )
+        end = response.index("};", start) + 1
+        json_str = response[start:end]
+        data = json.loads(json_str)
+
+        d = data['contents']['twoColumnWatchNextResults']['results']['results']['contents'][0]
+        '''info = {
+            "channel":,
+            "views":d['videoPrimaryInfoRenderer']['viewCount']['videoViewCountRenderer']['viewCount']['simpleText'],
+            "date":,
+            "ratio":,
+            "description":,
+            "title":d['videoPrimaryInfoRenderer']['title']['runs'][0]['text'],
+        }
+
+        comment = {
+            "author":,
+            "likes":,
+            "date":,
+            "content":,
+        }'''
+
     def search_videos(self):
+        headers = {"Accept-Language": "en-US,en;q=0.5"}
         encoded_search = urllib.parse.quote(self.search_terms)
         BASE_URL = "https://youtube.com"
         url = f"{BASE_URL}/results?search_query={encoded_search}&lang=en"
-        response = requests.get(url).text
+        response = requests.get(url, headers=headers).text
         while 'window["ytInitialData"]' not in response:
-            response = requests.get(url).text
+            response = requests.get(url, headers=headers).text
         results = self.parse_html_videos(response)
         if self.max_results is not None and len(results) > self.max_results:
             return results[: self.max_results]
         return results
 
     def search_channels(self):
+        headers = {"Accept-Language": "en-US,en;q=0.5"}
         encoded_search = urllib.parse.quote(self.search_terms)
         BASE_URL = "https://youtube.com"
         url = f"{BASE_URL}/results?search_query={encoded_search}"
-        response = requests.get(url).text
+        response = requests.get(url, headers=headers).text
         while 'window["ytInitialData"]' not in response:
-            response = requests.get(url).text
+            response = requests.get(url, headers=headers).text
         results = self.parse_html_channels(response)
         if self.max_results is not None and len(results) > self.max_results:
             return results[: self.max_results]
@@ -199,3 +240,4 @@ class YoutubeSearch:
 
     def channels_to_json(self):
         return json.dumps({"channels": self.channels})
+
