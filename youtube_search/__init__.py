@@ -219,11 +219,22 @@ class YoutubeSearch:
                     res["long_desc"] = video_data.get("descriptionSnippet", {}).get("runs", [{}])[0].get("text", None)
                     res["channel"] = video_data.get("longBylineText", {}).get("runs", [[{}]])[0].get("text", None)
                     res["duration"] = video_data.get("lengthText", {}).get("simpleText", 0)
-                    res["views"] = video_data.get("viewCountText", {}).get("simpleText", 0).split(" ")[0]
+                    
+                    try:
+                        res["views"] = video_data.get("viewCountText", {}).get("simpleText", 0).split(" ")[0]
+                    except:
+                        if "LIVE" in str(video_data.get("thumbnailOverlays")):
+                            res["views"] = "Livestream"
+                        else:
+                            res['views'] = "unavailable"
                     try:
                         res['publishedText'] = video_data.get("publishedTimeText", None).get("simpleText")
                     except:
-                        res['publishedText'] = "unavailable"
+                        if "UPCOMING" in str(video_data.get("thumbnailOverlays")):
+                            res['publishedText'] = "Scheduled"
+                        else:
+                            res['publishedText'] = "Unavailable"
+                            
                     res["url_suffix"] = video_data.get("navigationEndpoint", {}).get("commandMetadata", {}).get("webCommandMetadata", {}).get("url", None)
                     res["channelId"] = video_data.get("longBylineText").get("runs")[0].get("navigationEndpoint").get("browseEndpoint").get("browseId")
                     results.append(res)
