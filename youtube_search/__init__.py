@@ -1,7 +1,7 @@
 import requests
 import urllib.parse
 import json
-
+from bs4 import BeautifulSoup as bs
 
 class YoutubeSearch:
     def __init__(self, search_terms: str, max_results=None):
@@ -10,7 +10,6 @@ class YoutubeSearch:
 
         self.videos = self.search_videos()
         self.channels = self.search_channels()
-        
 
     def channelInfo(id, includeVideos=True):
         headers = {"Accept-Language": "en-US,en;q=0.5"}
@@ -41,12 +40,16 @@ class YoutubeSearch:
             videoContent = data["contents"]["twoColumnBrowseResultsRenderer"]['tabs'][1]['tabRenderer']['content'][
                 'sectionListRenderer']['contents'][0]['itemSectionRenderer'][
                 'contents'][0]['gridRenderer']['items']
+                
         channelDetails = data["header"]['c4TabbedHeaderRenderer']
 
         try:
             sC = channelDetails['subscriberCountText']['simpleText'].split(" ")[0]
         except:
-            sC = channelDetails['subscriberCountText']['runs'][0]['text'].split(" ")[0]
+            try:
+                sC = channelDetails['subscriberCountText']['runs'][0]['text'].split(" ")[0]
+            except:
+                sC = "unavailable"
             
         channel = {
             'id': id,
@@ -79,44 +82,6 @@ class YoutubeSearch:
             results.append(videos)
 
         return results
-
-    def videoInfo(id):
-        headers = {"Accept-Language": "en-US,en;q=0.5"}
-        videoId = urllib.parse.quote(id)
-        BASE_URL = "https://youtube.com"
-
-        url = f"{BASE_URL}/watch?v={videoId}/videos"
-        response = requests.get(url, headers=headers).text
-
-        while 'window["ytInitialData"]' not in response:
-            response = requests.get(url, headers=headers).text
-
-        results = []
-        start = (
-            response.index('window["ytInitialData"]')
-            + len('window["ytInitialData"]')
-            + 3
-        )
-        end = response.index("};", start) + 1
-        json_str = response[start:end]
-        data = json.loads(json_str)
-
-        d = data['contents']['twoColumnWatchNextResults']['results']['results']['contents'][0]
-        '''info = {
-            "channel":,
-            "views":d['videoPrimaryInfoRenderer']['viewCount']['videoViewCountRenderer']['viewCount']['simpleText'],
-            "date":,
-            "ratio":,
-            "description":,
-            "title":d['videoPrimaryInfoRenderer']['title']['runs'][0]['text'],
-        }
-
-        comment = {
-            "author":,
-            "likes":,
-            "date":,
-            "content":,
-        }'''
 
     def search_videos(self):
         headers = {"Accept-Language": "en-US,en;q=0.5"}
