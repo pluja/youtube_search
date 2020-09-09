@@ -67,15 +67,29 @@ class YoutubeSearch:
                     title=video['gridVideoRenderer']['title']['simpleText']
                 except:
                     title=video['gridVideoRenderer']['title']['runs'][0]['text']
+                
+                timeStamp = "Unavailable"
+                try:
+                    timeStamp = video['gridVideoRenderer']['publishedTimeText']['simpleText']
+                    views = video['gridVideoRenderer']['viewCountText']['simpleText']
+                except:
+                    print(video['gridVideoRenderer']['thumbnailOverlays'])
+                    if 'UPCOMING' in str(video['gridVideoRenderer']['thumbnailOverlays'][0]):
+                        timeStamp = "Scheduled"
+                        views = "-"
+                    else:
+                        timeStamp = "Unavailable"
+                        views = "Unavailable"
 
+                print(video['gridVideoRenderer'])
                 vid = {
                     'id': video['gridVideoRenderer']['videoId'],
                     'videoThumb': video['gridVideoRenderer']['thumbnail']['thumbnails'][1]['url'],
                     'videoTitle': title,
                     'channelName': channelDetails['title'],
                     'channelId': id,
-                    'timeStamp': video['gridVideoRenderer']['publishedTimeText']['simpleText'],
-                    'views': video['gridVideoRenderer']['viewCountText']['simpleText'],
+                    'timeStamp': timeStamp,
+                    'views': views,
                     'channelUrl': "/channel/{}".format(id)
                 }
                 videos.append(vid)
