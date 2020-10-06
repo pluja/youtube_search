@@ -1,7 +1,8 @@
 [![Generic badge](https://img.shields.io/badge/PyPi-1.2.1-green.svg)](https://pypi.org/project/youtube-search-fork/)
-[![Generic badge](https://img.shields.io/badge/Mantained-YES-green.svg)](https://pypi.org/project/youtube-search-fork/)
+[![Generic badge](https://img.shields.io/badge/Mantained-NO-red.svg)](https://pypi.org/project/youtube-search-fork/)
 
 
+Check out the new version [here](https://github.com/ytorg/yotter-api)
 
 
 # youtube_search-fork
